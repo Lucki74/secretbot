@@ -33,6 +33,12 @@ export class MuteManager {
 
     if (delay <= 0) {
       await this.unmute(guildId, userId);
+    } else if (delay > 2147483647) {
+      const timeout = setTimeout(() => {
+        this.timeouts.delete(key);
+        this.scheduleUnmute(guildId, userId, expiresAt);
+      }, 2147483647);
+      this.timeouts.set(key, timeout);
     } else {
       const timeout = setTimeout(() => this.unmute(guildId, userId), delay);
       this.timeouts.set(key, timeout);

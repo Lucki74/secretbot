@@ -3,479 +3,208 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Secretbot Dashboard</title>
+        <title>Secretbot | Advanced Moderation</title>
         <link rel="icon" type="image/png" href="/secretbot.png" />
         <link rel="stylesheet" href="/css/style.css" />
         <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code&display=swap"
             rel="stylesheet"
         />
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            body {
+                overflow-y: auto;
+                background-image:
+                    radial-gradient(
+                        circle at 10% 20%,
+                        rgba(88, 101, 242, 0.05) 0%,
+                        transparent 20%
+                    ),
+                    radial-gradient(
+                        circle at 90% 80%,
+                        rgba(88, 101, 242, 0.05) 0%,
+                        transparent 20%
+                    );
+            }
+            .hero-section {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                text-align: center;
+                padding: 100px 20px;
+            }
+            .hero-logo {
+                width: 140px;
+                height: 140px;
+                border-radius: 32px;
+                margin-bottom: 32px;
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+                transition: transform 0.3s ease;
+            }
+            .hero-logo:hover {
+                transform: scale(1.05);
+            }
+            .hero-title {
+                font-size: clamp(3rem, 8vw, 5rem);
+                font-weight: 800;
+                margin-bottom: 24px;
+                background: linear-gradient(135deg, #fff 30%, #5865f2 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                letter-spacing: -0.02em;
+            }
+            .hero-subtitle {
+                font-size: 1.25rem;
+                color: var(--text-secondary);
+                max-width: 700px;
+                line-height: 1.6;
+                margin-bottom: 48px;
+            }
+            .nav-top-left {
+                position: fixed;
+                top: 30px;
+                left: 40px;
+                z-index: 100;
+            }
+            .feature-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 24px;
+                max-width: 1100px;
+                width: 100%;
+                margin-top: 60px;
+            }
+            .feature-item {
+                background: var(--bg-surface);
+                padding: 32px;
+                border-radius: 16px;
+                border: 1px solid var(--border-color);
+                transition: all 0.3s ease;
+                text-align: left;
+            }
+            .feature-item:hover {
+                transform: translateY(-8px);
+                border-color: var(--accent);
+                background-color: var(--bg-surface-hover);
+            }
+            .feature-item .icon {
+                width: 48px;
+                height: 48px;
+                background: rgba(88, 101, 242, 0.1);
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 20px;
+                color: var(--accent);
+                font-size: 1.5rem;
+            }
+            .feature-item h3 {
+                color: var(--text-primary);
+                margin-bottom: 12px;
+                font-size: 1.25rem;
+            }
+            .feature-item p {
+                font-size: 1rem;
+                color: var(--text-secondary);
+                line-height: 1.5;
+            }
+            .cta-buttons {
+                display: flex;
+                gap: 16px;
+            }
+            .badge {
+                background: rgba(88, 101, 242, 0.1);
+                color: var(--accent);
+                padding: 6px 12px;
+                border-radius: 100px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                margin-bottom: 16px;
+                display: inline-block;
+            }
+            footer {
+                padding: 40px;
+                text-align: center;
+                color: var(--text-secondary);
+                font-size: 0.9rem;
+                border-top: 1px solid var(--border-color);
+            }
+        </style>
     </head>
     <body>
-        <div id="login-overlay" class="login-overlay hidden">
-            <div class="login-box">
-                <h2>Welcome to Secretbot</h2>
-                <p>Please log in with Discord to continue.</p>
-                <a href="/auth/discord" class="btn btn-primary"
-                    >Login with Discord</a
+        <div class="nav-top-left">
+            <a
+                href="/dashboard"
+                class="btn btn-primary"
+                style="display: flex; align-items: center; gap: 8px"
+            >
+                <svg
+                    width="20"
+                    height="20"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"
+                    />
+                </svg>
+                Dashboard
+            </a>
+        </div>
+
+        <main class="hero-section">
+            <div class="badge">Open Source & Professional</div>
+            <img src="/secretbot.png" alt="Secretbot Logo" class="hero-logo" />
+            <h1 class="hero-title">Secretbot</h1>
+            <p class="hero-subtitle">
+                The ultimate moderation companion for growing Discord
+                communities. Powerful automation, persistent data, and a sleek
+                real-time dashboard.
+            </p>
+
+            <div class="cta-buttons">
+                <a href="/dashboard" class="btn btn-primary btn-lg"
+                    >Get Started</a
+                >
+                <a href="https://github.com" class="btn btn-secondary btn-lg"
+                    >View Source</a
                 >
             </div>
-        </div>
 
-        <div id="app" class="hidden">
-            <nav class="sidebar">
-                <div class="sidebar-header">
-                    <img
-                        src="/secretbot.png"
-                        width="32"
-                        height="32"
-                        style="border-radius: 8px"
-                        alt="Secretbot"
-                    />
-                    <h2>Secretbot</h2>
-                </div>
-                <div class="sidebar-user" id="user-info">
-                </div>
-
-                <div class="sidebar-section">SERVERS</div>
-                <div id="server-list" class="server-list">
-                </div>
-            </nav>
-
-            <main class="main-content">
-                <div id="no-selection" class="empty-state">
-                    <h2>Dashboard Overview</h2>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <div class="icon">🛡️</div>
+                    <h3>Advanced Moderation</h3>
                     <p>
-                        Select a server from the sidebar to configure its
-                        modules.
+                        Massban, softban, and persistent mutes that survive even
+                        if the user leaves and rejoins.
                     </p>
                 </div>
-
-                <div id="dashboard-view" class="dashboard-view hidden">
-                    <header class="topbar">
-                        <h2 id="current-server-name">Server Settings</h2>
-                        <div class="header-actions">
-                            <div class="save-status" id="save-status">
-                                Saved
-                            </div>
-                        </div>
-                    </header>
-
-                    <div class="tabs">
-                        <button class="tab-btn active" data-tab="overview">
-                            Overview
-                        </button>
-                        <button class="tab-btn" data-tab="cases">Cases</button>
-                        <button class="tab-btn" data-tab="tags">Tags</button>
-                        <button class="tab-btn" data-tab="history">
-                            History
-                        </button>
-                        <button class="tab-btn" data-tab="rolemodules">
-                            Role Modules
-                        </button>
-                        <button class="tab-btn" data-tab="plugins">
-                            Plugins
-                        </button>
-                        <button class="tab-btn" data-tab="logging">
-                            Logging
-                        </button>
-                        <button class="tab-btn" data-tab="automod">
-                            Automod
-                        </button>
-                        <button class="tab-btn" data-tab="embeds">
-                            Embed Builder
-                        </button>
-                        <button class="tab-btn" data-tab="members">
-                            Member Search
-                        </button>
-                        <button class="tab-btn" data-tab="yaml">
-                            Raw YAML
-                        </button>
-                    </div>
-
-                    <div class="tab-content">
-                        <div id="overview-tab" class="tab-pane active">
-                            <div class="stats-grid">
-                                <div class="stat-card">
-                                    <h3>Total Cases</h3>
-                                    <div class="stat-value" id="stat-cases">
-                                        0
-                                    </div>
-                                </div>
-                                <div class="stat-card">
-                                    <h3>Active Tags</h3>
-                                    <div class="stat-value" id="stat-tags">
-                                        0
-                                    </div>
-                                </div>
-                                <div class="stat-card">
-                                    <h3>Active Mutes</h3>
-                                    <div class="stat-value" id="stat-mutes">
-                                        0
-                                    </div>
-                                </div>
-                                <div class="stat-card">
-                                    <h3>Active Bans</h3>
-                                    <div class="stat-value" id="stat-bans">
-                                        0
-                                    </div>
-                                </div>
-                                <div class="stat-card">
-                                    <h3>Total Members</h3>
-                                    <div class="stat-value" id="stat-members">
-                                        0
-                                    </div>
-                                </div>
-                                <div class="stat-card">
-                                    <h3>Online</h3>
-                                    <div class="stat-value" id="stat-online">
-                                        0
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="charts-grid mt-20">
-                                <div class="chart-card">
-                                    <h3>Cases Overview (Last 7 Days)</h3>
-                                    <canvas id="cases-chart"></canvas>
-                                </div>
-                                <div class="chart-card">
-                                    <h3>Moderator Activity</h3>
-                                    <canvas id="mod-chart"></canvas>
-                                </div>
-                            </div>
-
-                            <div class="live-feed-section mt-20">
-                                <h3>Live Event Feed</h3>
-                                <div id="live-feed" class="live-feed">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="cases-tab" class="tab-pane">
-                            <div class="search-bar">
-                                <input
-                                    type="text"
-                                    id="case-search-input"
-                                    class="input-text"
-                                    placeholder="Filter by User ID..."
-                                />
-                                <button
-                                    id="case-search-btn"
-                                    class="btn btn-primary"
-                                >
-                                    Search
-                                </button>
-                            </div>
-                            <table class="table mt-20">
-                                <thead>
-                                    <tr>
-                                        <th>Case #</th>
-                                        <th>Type</th>
-                                        <th>User</th>
-                                        <th>Moderator</th>
-                                        <th>Reason</th>
-                                        <th>Date</th>
-                                        <th>Controls</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="cases-table-body"></tbody>
-                            </table>
-                            <div
-                                id="cases-pagination"
-                                style="margin-top: 10px"
-                            ></div>
-                        </div>
-
-                        <div id="tags-tab" class="tab-pane">
-                            <div class="automod-header">
-                                <p class="tab-desc">
-                                    Manage custom tags for this server.
-                                </p>
-                                <button
-                                    id="add-tag-btn"
-                                    class="btn btn-secondary"
-                                >
-                                    + Add Tag
-                                </button>
-                            </div>
-                            <table class="table mt-20">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Content</th>
-                                        <th>Controls</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tags-table-body"></tbody>
-                            </table>
-                        </div>
-
-                        <div id="history-tab" class="tab-pane">
-                            <div class="search-bar">
-                                <input
-                                    type="text"
-                                    id="history-search-input"
-                                    class="input-text"
-                                    placeholder="User ID..."
-                                />
-                                <button
-                                    id="history-search-btn"
-                                    class="btn btn-primary"
-                                >
-                                    Search
-                                </button>
-                            </div>
-                            <table class="table mt-20">
-                                <thead>
-                                    <tr>
-                                        <th>Username</th>
-                                        <th>Nickname</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="history-table-body"></tbody>
-                            </table>
-                        </div>
-
-                        <div id="rolemodules-tab" class="tab-pane">
-                            <div class="sub-section">
-                                <h3>Reaction Roles</h3>
-                                <div class="automod-header mt-10">
-                                    <button
-                                        id="add-rr-btn"
-                                        class="btn btn-secondary"
-                                    >
-                                        + Add Mapping
-                                    </button>
-                                </div>
-                                <table class="table mt-10">
-                                    <thead>
-                                        <tr>
-                                            <th>Message ID</th>
-                                            <th>Emoji</th>
-                                            <th>Role</th>
-                                            <th>Controls</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="rr-table-body"></tbody>
-                                </table>
-                            </div>
-
-                            <div class="sub-section mt-40">
-                                <h3>Persist Roles</h3>
-                                <table class="table mt-10">
-                                    <thead>
-                                        <tr>
-                                            <th>User ID</th>
-                                            <th>Role ID</th>
-                                            <th>Controls</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="persistroles-table-body"></tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div id="plugins-tab" class="tab-pane">
-                            <p class="tab-desc">
-                                Enable or disable core modules for this server.
-                            </p>
-                            <div class="plugin-list" id="plugin-list">
-                            </div>
-                        </div>
-
-                        <div id="logging-tab" class="tab-pane">
-                            <p class="tab-desc">
-                                Configure which channels receive specific event
-                                logs.
-                            </p>
-                            <div class="logging-grid" id="logging-grid">
-                            </div>
-                        </div>
-
-                        <div id="automod-tab" class="tab-pane">
-                            <div class="automod-header">
-                                <p class="tab-desc">
-                                    Manage regular expression filters and spam
-                                    thresholds.
-                                </p>
-                                <button
-                                    id="add-rule-btn"
-                                    class="btn btn-secondary"
-                                >
-                                    + Add Rule
-                                </button>
-                            </div>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Pattern (Regex)</th>
-                                        <th>Action</th>
-                                        <th>Reason</th>
-                                        <th>Controls</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="automod-rules-table">
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div id="embeds-tab" class="tab-pane">
-                            <div class="embed-builder-layout">
-                                <div class="embed-controls">
-                                    <label>Title</label>
-                                    <input
-                                        type="text"
-                                        id="embed-title"
-                                        class="input-text"
-                                    />
-
-                                    <label>Description</label>
-                                    <textarea
-                                        id="embed-desc"
-                                        class="input-text"
-                                        rows="5"
-                                    ></textarea>
-
-                                    <label>Color (Hex)</label>
-                                    <input
-                                        type="color"
-                                        id="embed-color"
-                                        value="#5865F2"
-                                    />
-
-                                    <label>Channel to Send</label>
-                                    <select
-                                        id="embed-channel"
-                                        class="input-select"
-                                    ></select>
-
-                                    <button
-                                        id="send-embed-btn"
-                                        class="btn btn-primary"
-                                        style="margin-top: 15px"
-                                    >
-                                        Send Embed
-                                    </button>
-                                </div>
-                                <div class="embed-preview-container">
-                                    <div
-                                        class="embed-preview"
-                                        id="embed-preview"
-                                    >
-                                        <div
-                                            class="embed-preview-sidebar"
-                                            id="preview-sidebar"
-                                        ></div>
-                                        <div class="embed-preview-content">
-                                            <div
-                                                class="embed-preview-title"
-                                                id="preview-title"
-                                            >
-                                                Title
-                                            </div>
-                                            <div
-                                                class="embed-preview-desc"
-                                                id="preview-desc"
-                                            >
-                                                Description
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="members-tab" class="tab-pane">
-                            <div class="search-bar">
-                                <input
-                                    type="text"
-                                    id="member-search-input"
-                                    class="input-text"
-                                    placeholder="Search members by username or ID..."
-                                />
-                                <button
-                                    id="member-search-btn"
-                                    class="btn btn-primary"
-                                >
-                                    Search
-                                </button>
-                            </div>
-                            <table class="table mt-20">
-                                <thead>
-                                    <tr>
-                                        <th>User</th>
-                                        <th>ID</th>
-                                        <th>Joined At</th>
-                                        <th>Roles</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="member-search-results">
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div id="yaml-tab" class="tab-pane">
-                            <div class="automod-header">
-                                <p class="tab-desc">
-                                    Edit server configuration directly in YAML
-                                    format.
-                                </p>
-                                <button
-                                    id="validate-yaml-btn"
-                                    class="btn btn-secondary"
-                                >
-                                    Validate YAML
-                                </button>
-                            </div>
-                            <div class="editor-container">
-                                <textarea
-                                    id="yaml-editor"
-                                    spellcheck="false"
-                                ></textarea>
-                            </div>
-                        </div>
-                    </div>
+                <div class="feature-item">
+                    <div class="icon">🤖</div>
+                    <h3>Smart Automod</h3>
+                    <p>
+                        Regex-based filters, spam detection, and anti-invite
+                        systems to keep your server clean 24/7.
+                    </p>
                 </div>
-            </main>
-        </div>
-
-        <div id="case-modal" class="modal hidden">
-            <div class="modal-content">
-                <button class="modal-close" onclick="closeModal('case-modal')">
-                    ×
-                </button>
-                <div id="case-modal-body"></div>
-            </div>
-        </div>
-
-        <div id="form-modal" class="modal hidden">
-            <div class="modal-content">
-                <button class="modal-close" onclick="closeModal('form-modal')">
-                    ×
-                </button>
-                <h3 id="form-modal-title">Form</h3>
-                <div id="form-modal-body" class="mt-20"></div>
-                <div class="header-actions mt-20">
-                    <button id="form-modal-submit" class="btn btn-primary">
-                        Submit
-                    </button>
-                    <button
-                        onclick="closeModal('form-modal')"
-                        class="btn btn-secondary"
-                    >
-                        Cancel
-                    </button>
+                <div class="feature-item">
+                    <div class="icon">📊</div>
+                    <h3>Real-time Insights</h3>
+                    <p>
+                        Visualize moderator activity and case trends directly
+                        through our modern web interface.
+                    </p>
                 </div>
             </div>
-        </div>
+        </main>
 
-        <div id="toast-container" class="toast-container"></div>
-
-        <script src="/js/app.js?v=1.0.1"></script>
+        <footer>
+            &copy; 2026 Secretbot Team. Built with Discord.js & Express.
+        </footer>
     </body>
 </html>

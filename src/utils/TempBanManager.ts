@@ -28,6 +28,12 @@ export class TempBanManager {
 
     if (delay <= 0) {
       this.unban(guildId, userId);
+    } else if (delay > 2147483647) {
+      const timeout = setTimeout(() => {
+        this.timeouts.delete(key);
+        this.scheduleUnban(guildId, userId, expiresAt);
+      }, 2147483647);
+      this.timeouts.set(key, timeout);
     } else {
       const timeout = setTimeout(() => this.unban(guildId, userId), delay);
       this.timeouts.set(key, timeout);
@@ -41,8 +47,8 @@ export class TempBanManager {
       this.timeouts.delete(key);
     }
     await this.client.db.tempBan.updateMany({
-        where: { guildId, userId, active: true },
-        data: { active: false }
+      where: { guildId, userId, active: true },
+      data: { active: false },
     });
   }
 
@@ -63,9 +69,11 @@ export class TempBanManager {
         where: { guildId, userId, active: true },
         data: { active: false },
       });
-
     } catch (error) {
-      console.error(`Failed to automatically unban user ${userId} in guild ${guildId}:`, error);
+      console.error(
+        `Failed to automatically unban user ${userId} in guild ${guildId}:`,
+        error,
+      );
     }
   }
 }

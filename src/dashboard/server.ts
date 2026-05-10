@@ -111,6 +111,12 @@ export function startDashboard(client: SecretbotClient) {
     const guildId = req.params.guildId || req.params.id;
     if (!guildId) return res.status(400).json({ error: "Missing guild ID" });
 
+    // Check if user has MANAGE_GUILD (0x20) permission via OAuth2 guilds
+    const userGuild = req.user.guilds?.find((g: any) => g.id === guildId);
+    if (userGuild && (BigInt(userGuild.permissions) & 0x20n) === 0x20n) {
+      return next();
+    }
+
     const allowed = await db.dashboardUser.findUnique({
       where: { id_guildId: { id: req.user.id, guildId } },
     });
@@ -718,8 +724,16 @@ export function startDashboard(client: SecretbotClient) {
     },
   );
 
-  app.use((req, res) => {
+  app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../public", "index.html"));
+  });
+
+  app.get("/dashboard", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public", "dashboard.html"));
+  });
+
+  app.use((req, res) => {
+    res.redirect("/");
   });
 
   server.listen(port, () => {

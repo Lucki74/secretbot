@@ -109,7 +109,7 @@ export class AutomodManager {
 
     if (config.automod.rules && Array.isArray(config.automod.rules)) {
       for (const rule of config.automod.rules) {
-        if (!rule || !rule.pattern || !rule.enabled) continue;
+        if (!rule || !rule.pattern || rule.enabled === false) continue;
         try {
           const regex = new RegExp(rule.pattern, rule.flags || "gi");
           if (regex.test(message.content)) {

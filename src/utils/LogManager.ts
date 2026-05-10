@@ -13,7 +13,8 @@ export class LogManager {
       client.dashboardIo.emit("log", {
         guildId,
         event: eventType.toUpperCase().replace("_", " "),
-        content: embed.data.title || "Event triggered",
+        content:
+          embed.data.title || embed.data.description || "Event triggered",
       });
     }
 

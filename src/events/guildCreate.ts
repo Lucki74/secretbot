@@ -2,12 +2,12 @@ import { Guild } from "discord.js";
 import { SecretbotClient } from "../SecretbotClient.js";
 
 export default async (client: SecretbotClient, guild: Guild) => {
-  const allowed = await client.db.allowedGuild.findUnique({
+  const blacklisted = await client.db.blacklistedGuild.findUnique({
     where: { id: guild.id },
   });
 
-  if (!allowed) {
-    console.log(`Left unauthorized guild: ${guild.name} (${guild.id})`);
+  if (blacklisted) {
+    console.log(`Left blacklisted guild: ${guild.name} (${guild.id})`);
     await guild.leave();
     return;
   }
@@ -18,5 +18,5 @@ export default async (client: SecretbotClient, guild: Guild) => {
     create: { id: guild.id },
   });
 
-  console.log(`Joined authorized guild: ${guild.name} (${guild.id})`);
+  console.log(`Joined guild: ${guild.name} (${guild.id})`);
 };

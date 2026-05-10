@@ -145,7 +145,7 @@ model StarboardEntry {
   @@unique([guildId, messageId])
 }
 
-model AllowedGuild {
+model BlacklistedGuild {
   id        String   @id // Guild ID
   createdAt DateTime @default(now())
 }

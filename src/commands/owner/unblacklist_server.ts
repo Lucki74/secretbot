@@ -3,9 +3,9 @@ import { SecretbotClient } from "../../SecretbotClient.js";
 import type { BotCommand } from "../../types/BotCommand.js";
 
 const command: BotCommand = {
-  name: "allow_server",
-  description: "Adds a server to the allowlist.",
-  usage: "!allow_server <guild_id>",
+  name: "unblacklist_server",
+  description: "Removes a server from the blacklist.",
+  usage: "!unblacklist_server <guild_id>",
   category: "owner",
   requiredLevel: 200,
   execute: async (
@@ -16,19 +16,17 @@ const command: BotCommand = {
     const guildId = args[0];
     if (!guildId) return message.reply(`Usage: ${command.usage}`);
 
-    await client.db.allowedGuild.upsert({
+    const result = await client.db.blacklistedGuild.deleteMany({
       where: { id: guildId },
-      update: {},
-      create: { id: guildId },
     });
 
-    await client.db.guild.upsert({
-      where: { id: guildId },
-      update: {},
-      create: { id: guildId, config: "" },
-    });
-
-    message.reply(`Server \`${guildId}\` has been allowed and registered.`);
+    if (result.count > 0) {
+      message.reply(
+        `Server \`${guildId}\` has been removed from the blacklist.`,
+      );
+    } else {
+      message.reply(`Server \`${guildId}\` was not blacklisted.`);
+    }
   },
 };
 

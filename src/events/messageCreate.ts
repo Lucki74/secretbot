@@ -12,10 +12,10 @@ export default async (client: SecretbotClient, message: Message) => {
   if (message.author.bot) return;
 
   if (message.guild) {
-    const isAllowed = await client.db.allowedGuild.findUnique({
+    const isBlacklisted = await client.db.blacklistedGuild.findUnique({
       where: { id: message.guild.id },
     });
-    if (!isAllowed) return;
+    if (isBlacklisted) return;
   }
 
   const slowmodeDeleted = await SlowmodeEnforcer.checkMessage(client, message);

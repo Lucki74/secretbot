@@ -11,6 +11,13 @@ const cooldowns = new Map<string, Map<string, number>>();
 export default async (client: SecretbotClient, message: Message) => {
   if (message.author.bot) return;
 
+  if (message.guild) {
+    const isAllowed = await client.db.allowedGuild.findUnique({
+      where: { id: message.guild.id },
+    });
+    if (!isAllowed) return;
+  }
+
   const slowmodeDeleted = await SlowmodeEnforcer.checkMessage(client, message);
   if (slowmodeDeleted) return;
 

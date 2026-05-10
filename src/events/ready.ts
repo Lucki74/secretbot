@@ -22,5 +22,16 @@ export default async (client: SecretbotClient) => {
 
   console.log(`Guilds: ${client.guilds.cache.size}`);
   console.log(`Commands: ${client.commands.size}`);
-};
 
+  // Check for unauthorized guilds on startup
+  for (const guild of client.guilds.cache.values()) {
+    const allowed = await client.db.allowedGuild.findUnique({
+      where: { id: guild.id },
+    });
+
+    if (!allowed) {
+      console.log(`Leaving unauthorized guild: ${guild.name} (${guild.id})`);
+      await guild.leave().catch(() => null);
+    }
+  }
+};

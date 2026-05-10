@@ -61,10 +61,10 @@
                 line-height: 1.6;
                 margin-bottom: 48px;
             }
-            .nav-top-left {
+            .nav-top-right {
                 position: fixed;
                 top: 30px;
-                left: 40px;
+                right: 40px;
                 z-index: 100;
             }
             .feature-grid {
@@ -134,7 +134,7 @@
         </style>
     </head>
     <body>
-        <div class="nav-top-left">
+        <div class="nav-top-right">
             <a
                 href="/dashboard"
                 class="btn btn-primary"
@@ -167,11 +167,8 @@
             </p>
 
             <div class="cta-buttons">
-                <a href="/dashboard" class="btn btn-primary btn-lg"
-                    >Get Started</a
-                >
                 <a href="https://github.com" class="btn btn-secondary btn-lg"
-                    >View Source</a
+                    >View Source Code</a
                 >
             </div>
 
@@ -204,7 +201,10 @@
         </main>
 
         <footer>
-            &copy; 2026 Secretbot Team. Built with Discord.js & Express.
+            <p>&copy; 2026 Secretbot. All rights reserved.</p>
+            <p style="font-size: 0.8rem; margin-top: 8px; opacity: 0.7">
+                Built with Discord.js, Express & Prisma
+            </p>
         </footer>
     </body>
 </html>

@@ -1,0 +1,44 @@
+{
+  "name": "secretbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "node dist/index.js",
+    "start:all": "concurrently \"npm run dev\" \"npm run dashboard\"",
+    "dev": "tsx watch src/index.ts",
+    "dashboard": "tsx watch src/dashboard/server.ts",
+    "build": "tsc && cpy \"src/public/**\" dist/public",
+    "postinstall": "prisma generate",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "discord.js": "^14.26.4",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "memorystore": "^1.6.8",
+    "passport": "^0.7.0",
+    "passport-discord": "^0.1.4",
+    "socket.io": "^4.8.3",
+    "yaml": "^2.8.4"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/express-session": "^1.19.0",
+    "@types/node": "^25.6.0",
+    "@types/passport": "^1.0.17",
+    "@types/passport-discord": "^0.1.15",
+    "concurrently": "^9.2.1",
+    "cpy-cli": "^7.0.0",
+    "prisma": "^6.19.3",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.5.0"
+  }
+}

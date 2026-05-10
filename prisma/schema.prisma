@@ -1,0 +1,201 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Guild {
+  id        String   @id
+  config    String   @default("") // YAML configuration
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cases     Case[]
+  mutes     Mute[]
+  tags      Tag[]
+  reminders Reminder[]
+  slowmodes Slowmode[]
+  counters  Counter[]
+  starboardEntries StarboardEntry[]
+  automodRules AutomodRule[]
+  tempBans      TempBan[]
+  persistRoles  PersistRole[]
+  reactionRoles ReactionRole[]
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  name      String
+  content   String
+  guildId   String
+  guild     Guild    @relation(fields: [guildId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+
+  @@unique([guildId, name])
+}
+
+model User {
+  id        String   @id
+  cases     Case[]
+  mutes     Mute[]
+  reminders Reminder[]
+}
+
+model CaseNote {
+  id        Int      @id @default(autoincrement())
+  caseId    Int
+  case      Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  authorId  String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+}
+
+model Case {
+  id              Int      @id @default(autoincrement())
+  guild           Guild    @relation(fields: [guildId], references: [id])
+  guildId         String
+  user            User     @relation(fields: [userId], references: [id])
+  userId          String
+  modId           String
+  type            String   // ban, kick, mute, warn, unban, unmute, note
+  reason          String?
+  notes           CaseNote[]
+  createdAt       DateTime @default(now())
+  caseNumber      Int      // Sequential per guild
+  deletedAt       DateTime?
+
+  @@unique([guildId, caseNumber])
+}
+
+model AutomodRule {
+  id        Int      @id @default(autoincrement())
+  guildId   String
+  guild     Guild    @relation(fields: [guildId], references: [id])
+  pattern   String
+  flags     String   @default("gi")
+  action    String   // delete, warn, mute, kick, ban
+  reason    String?
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model Mute {
+  id        Int      @id @default(autoincrement())
+  guild     Guild    @relation(fields: [guildId], references: [id])
+  guildId   String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  expiresAt DateTime?
+  roleId    String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@unique([guildId, userId])
+}
+
+model Reminder {
+  id        Int      @id @default(autoincrement())
+  guildId   String
+  guild     Guild    @relation(fields: [guildId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  channelId String
+  content   String
+  remindAt  DateTime
+  createdAt DateTime @default(now())
+}
+
+model Slowmode {
+  id        Int      @id @default(autoincrement())
+  guildId   String
+  guild     Guild    @relation(fields: [guildId], references: [id])
+  channelId String
+  seconds   Int
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@unique([guildId, channelId])
+}
+
+model Counter {
+  id        Int      @id @default(autoincrement())
+  guildId   String
+  guild     Guild    @relation(fields: [guildId], references: [id])
+  name      String
+  value     Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@unique([guildId, name])
+}
+
+model StarboardEntry {
+  id                Int      @id @default(autoincrement())
+  guildId           String
+  guild             Guild    @relation(fields: [guildId], references: [id])
+  messageId         String
+  starboardMessageId String
+  createdAt         DateTime @default(now())
+
+  @@unique([guildId, messageId])
+}
+
+model AllowedGuild {
+  id        String   @id // Guild ID
+  createdAt DateTime @default(now())
+}
+
+model DashboardUser {
+  id        String   @id // User ID
+  guildId   String
+  createdAt DateTime @default(now())
+
+  @@unique([id, guildId])
+}
+
+model TempBan {
+  id        Int      @id @default(autoincrement())
+  guildId   String
+  guild     Guild    @relation(fields: [guildId], references: [id])
+  userId    String
+  expiresAt DateTime
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@unique([guildId, userId])
+}
+
+model PersistRole {
+  id      Int    @id @default(autoincrement())
+  guildId String
+  guild   Guild  @relation(fields: [guildId], references: [id])
+  userId  String
+  roleId  String
+
+  @@unique([guildId, userId, roleId])
+}
+
+model ReactionRole {
+  id        Int    @id @default(autoincrement())
+  guildId   String
+  guild     Guild  @relation(fields: [guildId], references: [id])
+  messageId String
+  emoji     String
+  roleId    String
+
+  @@unique([guildId, messageId, emoji])
+}
+
+model NameHistory {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  username   String
+  nickname   String?
+  guildId    String?
+  recordedAt DateTime @default(now())
+}

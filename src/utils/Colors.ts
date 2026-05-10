@@ -1,0 +1,13 @@
+export const Colors = {
+  MOD_ACTION: "#FF4444",
+  SUCCESS: "#43B581",
+  INFO: "#5865F2",
+  WARNING: "#FAA61A",
+  AUTOMOD: "#FF6B35",
+  VOICE: "#9B59B6",
+  MSG_EDIT: "#F1C40F",
+  MSG_DELETE: "#E74C3C",
+  MEMBER_JOIN: "#2ECC71",
+  MEMBER_LEAVE: "#E74C3C",
+  STARBOARD: "#F1C40F",
+} as const;

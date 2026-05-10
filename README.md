@@ -1,6 +1,6 @@
 # Secretbot
 
-Secretbot is a TypeScript-based Discord moderation bot with a built-in Express dashboard. It features a comprehensive moderation suite, automated filters, server logging, and persistent data management using Prisma and MySQL.
+Secretbot is a TypeScript-based Discord moderation bot with a built-in Express dashboard. It features moderation, automod, server logging, and persistent data management using Prisma and MySQL.
 
 ## Setup Instructions
 

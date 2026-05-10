@@ -4,6 +4,7 @@ import { AutomodManager } from "../utils/AutomodManager.js";
 import { ConfigManager } from "../utils/ConfigManager.js";
 import { SlowmodeEnforcer } from "../utils/SlowmodeEnforcer.js";
 import { PermissionManager } from "../utils/PermissionManager.js";
+import type { BotCommand } from "../types/BotCommand.js";
 
 const cooldowns = new Map<string, Map<string, number>>();
 
@@ -51,7 +52,7 @@ export default async (client: SecretbotClient, message: Message) => {
   let content = message.content.trim();
   let commandName: string | undefined;
   let args: string[] = [];
-  let command = null;
+  let command: BotCommand | null = null;
 
   if (
     content.startsWith(botMentionPrefix) ||
@@ -72,13 +73,12 @@ export default async (client: SecretbotClient, message: Message) => {
         args = split;
 
         const staffIds = process.env.STAFF_IDS?.split(",") || [];
-        if (!staffIds.includes(message.author.id)) return; 
+        if (!staffIds.includes(message.author.id)) return;
       }
     }
   }
 
   if (!command) {
-
     let prefixSearchContent = content;
     if (
       content.startsWith(botMentionPrefix) ||
@@ -107,6 +107,10 @@ export default async (client: SecretbotClient, message: Message) => {
   }
 
   if (!command || !commandName) return;
+
+  if (!message.guild && command.category !== "owner") {
+    return;
+  }
 
   if (!cooldowns.has(command.name)) {
     cooldowns.set(command.name, new Map());
